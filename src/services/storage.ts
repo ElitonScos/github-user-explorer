@@ -23,6 +23,5 @@ export async function addToHistory(user: GithubUser): Promise<void> {
   } catch {}
 }
 
-export async function clearHistory(): Promise<void> {
-  await AsyncStorage.removeItem(HISTORY_KEY);
-}
+export async function removeFromHistory(login: string): Promise<void> {
+  const history = await getHis

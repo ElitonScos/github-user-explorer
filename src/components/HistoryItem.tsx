@@ -8,9 +8,10 @@ import { HistoryEntry } from '../types';
 interface Props {
   entry: HistoryEntry;
   onPress: () => void;
+  onDelete: () => void;
 }
 
-export function HistoryItem({ entry, onPress }: Props) {
+export function HistoryItem({ entry, onPress, onDelete }: Props) {
   const { user, viewedAt } = entry;
   const timeAgo = formatDistanceToNow(new Date(viewedAt), { addSuffix: true, locale: ptBR });
 
@@ -25,7 +26,9 @@ export function HistoryItem({ entry, onPress }: Props) {
           <Text style={styles.timeText}>{timeAgo}</Text>
         </View>
       </View>
-      <Ionicons name="chevron-forward" size={18} color="#6b7280" />
+      <TouchableOpacity onPress={onDelete} hitSlop={8} style={styles.deleteBtn}>
+        <Ionicons name="close-circle-outline" size={20} color="#6b7280" />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 }
@@ -61,13 +64,4 @@ const styles = StyleSheet.create({
     color: '#60a5fa',
   },
   time: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 2,
-  },
-  timeText: {
-    fontSize: 12,
-    color: '#6b7280',
-  },
-});
+  

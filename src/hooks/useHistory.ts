@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { getHistory, clearHistory } from '../services/storage';
+import { getHistory, clearHistory, removeFromHistory } from '../services/storage';
 import { HistoryEntry } from '../types';
 
 export function useHistory() {
@@ -25,5 +25,4 @@ export function useHistory() {
     setHistory([]);
   }, []);
 
-  return { history, loading, clear, reload: load };
-}
+  const remove = useCallback(async 

@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Platform,
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,17 +22,36 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'History'>;
 
 export function HistoryScreen() {
   const navigation = useNavigation<Nav>();
-  const { history, loading, clear } = useHistory();
+  const { history, loading, clear, remove } = useHistory();
 
   function confirmClear() {
-    Alert.alert(
-      'Limpar histórico',
-      'Deseja remover todos os perfis visitados?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Limpar', style: 'destructive', onPress: clear },
-      ]
-    );
+    if (Platform.OS === 'web') {
+      if (window.confirm('Deseja remover todos os perfis visitados?')) clear();
+    } else {
+      Alert.alert(
+        'Limpar histórico',
+        'Deseja remover todos os perfis visitados?',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Limpar', style: 'destructive', onPress: clear },
+        ]
+      );
+    }
+  }
+
+  function confirmRemove(login: string) {
+    if (Platform.OS === 'web') {
+      if (window.confirm(`Remover @${login} do histórico?`)) remove(login);
+    } else {
+      Alert.alert(
+        'Remover perfil',
+        `Deseja remover @${login} do histórico?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Remover', style: 'destructive', onPress: () => remove(login) },
+        ]
+      );
+    }
   }
 
   if (loading) {
@@ -64,6 +84,7 @@ export function HistoryScreen() {
               onPress={() =>
                 navigation.navigate('Profile', { username: item.user.login })
               }
+              onDelete={() => confirmRemove(item.user.login)}
             />
           </View>
         )}
@@ -82,27 +103,4 @@ export function HistoryScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#111827' },
-  centered: { flex: 1, backgroundColor: '#111827', justifyContent: 'center', alignItems: 'center' },
-  headerBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  title: { fontSize: 24, fontWeight: '700', color: '#f9fafb' },
-  clearBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#1f2937',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#374151',
-  },
-  clearText: { fontSize: 13, color: '#f87171' },
-  list: { paddingHorizontal: 20, paddingBottom: 24 },
-  item: { marginBottom: 10 },
-});
+  centered: { flex: 1, backgroundCo
